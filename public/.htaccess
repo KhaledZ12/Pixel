@@ -1,0 +1,18 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  DirectoryIndex index.html
+  RewriteBase /
+  
+  # Redirect to trailing slash if not a file and no trailing slash
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_URI} !index\.html$
+  RewriteCond %{REQUEST_URI} !^/admin/ [NC]
+  RewriteCond %{REQUEST_URI} !(.*)/$
+  RewriteRule ^(.*)$ $1/ [L,R=301]
+
+  # SPA Routing
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
