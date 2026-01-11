@@ -120,9 +120,9 @@ const ServicesPage = () => {
                       size="lg"
                       asChild
                     >
-                      <Link to="/contact/">
+                      <Link to="/contact/#contact-form">
                         <MessageCircle className="ml-2 h-4 w-4" />
-                        اطلب خدمتك
+                        احصل علي عرض سعر
                       </Link>
                     </Button>
                   </div>
@@ -144,9 +144,9 @@ const ServicesPage = () => {
               نساعدك على الظهور على الإنترنت والوصول للعملاء المستهدفين وتحقيق أهدافك التسويقية بسهولة. اكتشف الفرق وابدأ اليوم!
             </p>
             <Button size="lg" variant="secondary" className="shadow-lg" asChild>
-              <Link to="/contact/">
+              <Link to="/contact/#contact-form">
                 <MessageCircle className="ml-2 h-5 w-5" />
-                احجز خدمتك
+                احصل علي عرض سعر
               </Link>
             </Button>
           </div>

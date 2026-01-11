@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
+import emailjs from '@emailjs/browser';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -18,11 +19,15 @@ const ContactPage = () => {
     name: "",
     email: "",
     phone: "",
-    message: ""
+    message: "",
+    service: [] as string[]
   });
 
   useEffect(() => {
     loadContent();
+    // Initialize EmailJS
+    emailjs.init("hxjFPdVkIxNDBaixa");
+    console.log("EmailJS Initialized");
   }, []);
 
   const loadContent = async () => {
@@ -38,14 +43,52 @@ const ContactPage = () => {
     e.preventDefault();
 
     try {
-      await sendContactMessage(formData);
+      const serviceString = formData.service.join('، ');
+
+      // 1. Send to Database
+      await sendContactMessage({
+        ...formData,
+        service: serviceString
+      });
+
+      // 2. Send Email via EmailJS
+      // You need to create an account at https://www.emailjs.com/
+      // 1. Create a Service (e.g., Gmail)
+      // 2. Create a Template. In the "To Email" field of the template, put: kalebyawy@gmail.com
+      // 3. Add these variables to your template: {{from_name}}, {{from_email}}, {{phone}}, {{message}}, {{service}}
+      // 4. Get your keys from Account > API Keys and replace the values below:
+
+      const SERVICE_ID = "service_m8w9umo";
+      const TEMPLATE_ID = "template_3xgki9a";
+      const PUBLIC_KEY = "hxjFPdVkIxNDBaixa";
+
+      try {
+        console.log("Attempting to send email via EmailJS...", { SERVICE_ID, TEMPLATE_ID, PUBLIC_KEY });
+        const result = await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+          to_name: "Admin",
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          message: formData.message,
+          service: serviceString,
+        }, PUBLIC_KEY);
+        console.log("EmailJS Success:", result.text);
+      } catch (emailError: any) {
+        console.error("EmailJS Failed:", emailError);
+        const errorMessage = emailError?.text || emailError?.message || "Unknown error";
+        toast({
+          title: "فشل إرسال البريد الإلكتروني",
+          description: `تم حفظ الرسالة في النظام، ولكن فشل إرسال الإشعار البريدي. السبب: ${errorMessage}. تأكد من إيقاف مانع الإعلانات (AdBlock) إذا كان يعمل.`,
+          variant: "destructive"
+        });
+      }
 
       toast({
         title: "تم إرسال رسالتك بنجاح",
         description: "سنتواصل معك في أقرب وقت ممكن",
       });
 
-      setFormData({ name: "", email: "", phone: "", message: "" });
+      setFormData({ name: "", email: "", phone: "", message: "", service: [] });
     } catch (error) {
       console.error('Error sending message:', error);
       toast({
@@ -56,11 +99,20 @@ const ContactPage = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
+  };
+
+  const toggleService = (serviceId: string) => {
+    setFormData(prev => {
+      const services = prev.service.includes(serviceId)
+        ? prev.service.filter(s => s !== serviceId)
+        : [...prev.service, serviceId];
+      return { ...prev, service: services };
+    });
   };
 
   return (
@@ -138,38 +190,30 @@ const ContactPage = () => {
         </div>
       </section>
 
-      {/* Contact Form and Map */}
-      <section className="py-20 lg:py-32 bg-background">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Map */}
-            <div className="order-2 lg:order-1">
-              <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-lg h-full min-h-[400px]">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3453.123456789!2d31.383333!3d31.033333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzHCsDAxJzYwLjAiTiAzMcKwMjMnMDAuMCJF!5e0!3m2!1sen!2seg!4v1234567890"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0, minHeight: "400px" }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="موقعنا على الخريطة"
-                ></iframe>
-              </div>
+      {/* Contact Form */}
+      <section id="contact-form" className="py-12 lg:py-20 bg-background relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-primary/5 blur-3xl"></div>
+          <div className="absolute top-[40%] -left-[10%] w-[40%] h-[40%] rounded-full bg-blue-500/5 blur-3xl"></div>
+        </div>
+
+        <div className="container mx-auto px-4 lg:px-8 relative z-10">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl lg:text-3xl font-bold mb-3">
+                ابق على <span className="text-primary">تواصل معنا</span>
+              </h2>
+              <p className="text-muted-foreground text-base">
+                نحن هنا لمساعدتك في بناء مشروعك الرقمي القادم. املأ النموذج أدناه وسنتصل بك قريباً.
+              </p>
             </div>
 
-            {/* Contact Form */}
-            <div className="order-1 lg:order-2">
-              <div className="mb-8">
-                <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-                  ابق على <span className="text-primary">تواصل معنا</span>
-                </h2>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">الأسم *</Label>
+            <div className="bg-card border border-border/50 rounded-2xl p-6 shadow-xl backdrop-blur-sm">
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="name" className="text-sm">الأسم الكامل <span className="text-red-500">*</span></Label>
                     <Input
                       id="name"
                       name="name"
@@ -177,60 +221,118 @@ const ContactPage = () => {
                       onChange={handleChange}
                       placeholder="أدخل اسمك"
                       required
-                      className="h-12 rounded-xl"
+                      className="h-10 rounded-lg bg-background/50 border-input/50 focus:bg-background transition-all duration-300"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">البريد الإلكتروني *</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="email" className="text-sm">البريد الإلكتروني <span className="text-red-500">*</span></Label>
                     <Input
                       id="email"
                       name="email"
                       type="email"
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="بريدك الإلكتروني"
+                      placeholder="name@example.com"
                       required
-                      className="h-12 rounded-xl"
+                      className="h-10 rounded-lg bg-background/50 border-input/50 focus:bg-background transition-all duration-300"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="phone">رقم الجوال *</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="phone" className="text-sm">رقم الجوال <span className="text-red-500">*</span></Label>
                   <Input
                     id="phone"
                     name="phone"
                     type="tel"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="رقم جوالك"
+                    placeholder="05xxxxxxxx"
                     required
-                    className="h-12 rounded-xl"
+                    className="h-10 rounded-lg bg-background/50 border-input/50 focus:bg-background transition-all duration-300 text-right"
+                    dir="ltr"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="message">رسالتك *</Label>
+                <div className="space-y-3">
+                  <Label className="text-sm">نوع الخدمة المطلوبة <span className="text-red-500">*</span></Label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {[
+                      { id: "تصميم موقع", label: "تصميم مواقع", icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="2" x2="22" y1="12" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg> },
+                      { id: "إنشاء حملة اعلانية علي جوجل", label: "إعلانات جوجل", icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m4.93 4.93 14.14 14.14" /><path d="m17.657 6.343-4.243 4.243" /></svg> },
+                      { id: "ادارة صفحات سوشيال ميديا", label: "سوشيال ميديا", icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg> },
+                      { id: "تصميم متجر الكتروني", label: "متاجر إلكترونية", icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><path d="M3 6h18" /><path d="M16 10a4 4 0 0 1-8 0" /></svg> },
+                      { id: "تحسين محركات البحث SEO", label: "تحسين SEO", icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg> },
+                      { id: "اخري", label: "خدمة أخرى", icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" /></svg> }
+                    ].map((service) => (
+                      <div
+                        key={service.id}
+                        onClick={() => toggleService(service.id)}
+                        className={`
+                          cursor-pointer relative flex items-center gap-3 p-3 rounded-xl border transition-all duration-200
+                          ${formData.service.includes(service.id)
+                            ? 'border-primary bg-primary/5 shadow-sm'
+                            : 'border-border/50 bg-card hover:border-primary/50 hover:bg-accent/50'}
+                        `}
+                      >
+                        <div className={`
+                          w-8 h-8 rounded-full flex items-center justify-center transition-colors shrink-0
+                          ${formData.service.includes(service.id) ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}
+                        `}>
+                          {service.icon}
+                        </div>
+                        <span className={`font-medium text-xs sm:text-sm ${formData.service.includes(service.id) ? 'text-primary' : 'text-foreground'}`}>
+                          {service.label}
+                        </span>
+                        {formData.service.includes(service.id) && (
+                          <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-primary"></div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="message" className="text-sm">تفاصيل المشروع <span className="text-red-500">*</span></Label>
                   <Textarea
                     id="message"
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    placeholder="اكتب رسالتك هنا..."
+                    placeholder="أخبرنا المزيد عن مشروعك وأهدافك..."
                     required
-                    className="min-h-[150px] rounded-xl resize-none"
+                    className="min-h-[100px] rounded-lg resize-none bg-background/50 border-input/50 focus:bg-background transition-all duration-300"
                   />
                 </div>
 
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full md:w-auto px-12 h-12 rounded-xl text-lg"
+                  className="w-full h-11 rounded-xl text-base font-bold shadow-lg hover:shadow-primary/25 transition-all duration-300"
                 >
-                  إرسال
+                  إرسال الطلب
                 </Button>
               </form>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Map Section */}
+      <section className="py-0 pb-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-lg h-[400px] lg:h-[500px]">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3453.123456789!2d31.383333!3d31.033333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzHCsDAxJzYwLjAiTiAzMcKwMjMnMDAuMCJF!5e0!3m2!1sen!2seg!4v1234567890"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="موقعنا على الخريطة"
+              className="w-full h-full grayscale-[50%] hover:grayscale-0 transition-all duration-500"
+            ></iframe>
           </div>
         </div>
       </section>

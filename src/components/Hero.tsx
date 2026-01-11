@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Phone } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import partnerBadge from "@/assets/PartnerBadge.png";
 import { useContact } from "@/hooks/useContact";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   const { contactInfo } = useContact();
   const [videoLoaded, setVideoLoaded] = useState(false);
 
   // Fallback contact info if loading or unavailable
-  const phoneNumber = contactInfo?.phone || '01068001154';
   const whatsappNumber = contactInfo?.whatsappNumber || '201068001154';
 
   return (
@@ -54,10 +54,10 @@ const Hero = () => {
               className="gradient-primary shadow-[0_0_40px_hsl(var(--primary)/0.5)] hover:shadow-[0_0_60px_hsl(var(--primary)/0.7)] hover:scale-105 transition-all duration-300 text-lg sm:text-xl font-bold h-14 sm:h-16 px-8 sm:px-12 w-full sm:w-auto"
               asChild
             >
-              <a href={`tel:${phoneNumber}`} className="flex items-center">
-                <Phone className="ml-2 h-6 w-6" />
-                اتصل بنا
-              </a>
+              <Link to="/contact/#contact-form" className="flex items-center">
+                <MessageCircle className="ml-2 h-6 w-6" />
+                احصل علي عرض سعر
+              </Link>
             </Button>
             <Button
               size="lg"

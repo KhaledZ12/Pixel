@@ -115,5 +115,6 @@ export interface ContactMessage {
   email: string;
   phone: string;
   message: string;
+  service?: string;
   created_at: string;
 }

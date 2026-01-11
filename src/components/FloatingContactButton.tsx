@@ -22,13 +22,13 @@ const FloatingContactButton = () => {
                     }`}
             >
                 {/* Phone Button */}
-                <a
+                {/* <a
                     href="tel:01068001154"
                     className="bg-[#25D366] hover:bg-[#20bd5a] text-white p-3 rounded-full shadow-lg transition-transform hover:scale-110 flex items-center justify-center w-14 h-14"
                     aria-label="Call us"
                 >
                     <Phone className="w-6 h-6" />
-                </a>
+                </a> */}
 
                 {/* WhatsApp Button */}
                 <a

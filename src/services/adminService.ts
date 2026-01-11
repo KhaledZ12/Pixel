@@ -338,15 +338,19 @@ export const getFAQs = async (): Promise<FAQItem[]> => {
   }));
 };
 
-export const sendContactMessage = async (message: { name: string; email: string; phone: string; message: string }) => {
+export const sendContactMessage = async (message: { name: string; email: string; phone: string; message: string; service?: string }) => {
   const { error } = await supabase
     .from('contact_messages' as any)
-    .insert([{
-      name: message.name,
-      email: message.email,
-      phone: message.phone,
-      message: message.message
-    }]);
+    .insert([
+      {
+        name: message.name,
+        email: message.email,
+        phone: message.phone,
+        message: message.message,
+        service: message.service || ''
+      }
+    ]);
+
 
   if (error) throw error;
 };
@@ -592,6 +596,7 @@ export const getContactMessages = async (): Promise<ContactMessage[]> => {
     email: m.email,
     phone: m.phone,
     message: m.message,
+    service: m.service,
     created_at: m.created_at,
   }));
 };

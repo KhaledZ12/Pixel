@@ -109,6 +109,9 @@ const ContactMessages = () => {
                                     <div className="bg-muted/30 p-4 rounded-lg text-foreground/90 leading-relaxed whitespace-pre-wrap">
                                         {message.message}
                                     </div>
+                                    <div className="mt-2 text-sm text-primary">
+                                        <strong>الخدمة المطلوبة:</strong> {message.service || 'غير محدد'}
+                                    </div>
                                 </div>
 
                                 <div className="flex md:flex-col justify-end gap-2">
