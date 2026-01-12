@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
-import partnerBadge from "@/assets/PartnerBadge.png";
 import { useContact } from "@/hooks/useContact";
 import { Link } from "react-router-dom";
 

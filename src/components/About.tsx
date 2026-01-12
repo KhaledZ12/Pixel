@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Target, Rocket, Users, Award } from "lucide-react";
 import { getAboutContent } from "@/services/adminService";
 import { AboutPageContent } from "@/types/admin";
+import partnerBadge from "@/assets/PartnerBadge.png";
 
 const About = () => {
   const [content, setContent] = useState<AboutPageContent | null>(null);
@@ -124,6 +125,30 @@ const About = () => {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+
+        <div className="mt-10 sm:mt-12 flex justify-center">
+          <div className="text-center">
+            <div className="text-sm sm:text-base font-semibold text-muted-foreground mb-3">شريك معتمد من Google</div>
+            <a
+              href="https://www.google.com/partners/agency?id=3139297470"
+              rel="nofollow noopener"
+              target="_blank"
+              className="group inline-flex"
+            >
+              <span className="inline-flex rounded-3xl bg-gradient-to-r from-primary/40 via-accent/30 to-secondary/40 p-[1px] shadow-[0_0_0_1px_rgba(255,255,255,0.06)]">
+                <span className="inline-flex items-center gap-4 rounded-3xl bg-card/95 backdrop-blur px-7 sm:px-8 py-5 hover:bg-card transition-colors">
+                  <img
+                    src={partnerBadge}
+                    alt="Google Partner"
+                    className="h-12 sm:h-14 w-auto object-contain block"
+                    loading="lazy"
+                  />
+                  <span className="hidden sm:block text-sm font-semibold text-foreground/80 group-hover:text-foreground transition-colors">اعرض الشهادة</span>
+                </span>
+              </span>
+            </a>
           </div>
         </div>
 

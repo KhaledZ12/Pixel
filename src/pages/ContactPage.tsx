@@ -166,7 +166,7 @@ const ContactPage = () => {
               </div>
               <h3 className="font-bold mb-2">
                 <a
-                  href="https://maps.app.goo.gl/rNeBQARUwZK9BBCt6"
+                  href="https://maps.app.goo.gl/FKYm5y9DPBWkdSPG7?g_st=ipc"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-primary transition-colors"
@@ -323,7 +323,7 @@ const ContactPage = () => {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-lg h-[400px] lg:h-[500px]">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3453.123456789!2d31.383333!3d31.033333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzHCsDAxJzYwLjAiTiAzMcKwMjMnMDAuMCJF!5e0!3m2!1sen!2seg!4v1234567890"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3423.6!2d31.2605534!3d30.7144435!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14f7c184693b7ddb%3A0x722af595773b9705!2zYml4ZWwgRm9yIEUtTWFya2V0aW5n!5e0!3m2!1sen!2seg!4v1705000000000!5m2!1sen!2seg"
               width="100%"
               height="100%"
               style={{ border: 0 }}
